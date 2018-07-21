@@ -38,16 +38,24 @@ io.on('connection', (socket) => { //individual socket
 	// 	console.log('createEmail', newEmail);
 	// });
 
-	//newMessage Event
-	socket.emit('newMessage', {
+	//emits to single connection
+	//placed inside createMessage
+	/*socket.emit('newMessage', {
 		from: 'John',
 		text: 'Get your shit together',
 		createdAt: 23456
-	});
+	});*/
 
 	//createMessage Event
 	socket.on('createMessage', (message) => {
 		console.log('createMessage', message);
+		//emits to every single connection
+		io.emit('newMessage', {
+			from: message.from,
+			text: message.text,
+			//prevents clients from spoofing, so created on server side
+			createdAt: new Date().getTime()
+		}) 
 	});
 
 	socket.on('disconnect', () => {

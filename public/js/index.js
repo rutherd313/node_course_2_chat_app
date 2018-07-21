@@ -11,10 +11,11 @@ socket.on('connect', function () {
 	});*/
 
 	//----project
-	socket.emit('createMessage', {
+	//deleted after updating createMessage in server.js
+	/*socket.emit('createMessage', {
 		from: 'god',
 		text: 'Keep going forward.'
-	});
+	});*/
 });
 
 socket.on('disconnect', function () {
