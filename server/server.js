@@ -46,6 +46,20 @@ io.on('connection', (socket) => { //individual socket
 		createdAt: 23456
 	});*/
 
+	//challenge
+	socket.emit('newMessage', {
+		//anytime msg sent from server, text is from admin
+		from: 'Admin',
+		text: 'Welcome to the chat app',
+		createdAt: new Date().getTime()
+	})
+
+	socket.broadcast.emit('newMessage', {
+		from: 'Admin',
+		text: 'New user joined',
+		createdAt: new Date().getTime()
+	})
+
 	//createMessage Event
 	socket.on('createMessage', (message) => {
 		console.log('createMessage', message);
@@ -55,7 +69,14 @@ io.on('connection', (socket) => { //individual socket
 			text: message.text,
 			//prevents clients from spoofing, so created on server side
 			createdAt: new Date().getTime()
-		}) 
+		})
+		//broadcasting -> emiting event to err body except for one user
+		//this case, errbody will see message sent except me
+		/*socket.broadcast.emit('newMessage', {
+			from: message.from,
+			text: message.text,
+			createdAt: new Date().getTime()
+		})*/
 	});
 
 	socket.on('disconnect', () => {
