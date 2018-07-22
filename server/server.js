@@ -53,11 +53,11 @@ io.on('connection', (socket) => { //individual socket
 	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
 	//createMessage Event
-	socket.on('createMessage', (message) => {
+	socket.on('createMessage', (message, callback) => {
 		console.log('createMessage', message);
 		//emits to every single connection
 		io.emit('newMessage', generateMessage(message.from, message.text));
-
+		callback('This is from the server');
 		//broadcasting -> emiting event to err body except for one user
 		//this case, errbody will see message sent except me
 		/*socket.broadcast.emit('newMessage', {

@@ -27,7 +27,34 @@ socket.on('disconnect', function () {
 	console.log('New email', email);
 })*/
 
-//----project
 socket.on('newMessage', function(message) {
 	console.log('New message', message);
+	var li = jQuery('<li></li>');
+	li.text(`${message.from}: ${message.text}`)
+
+	//rendering to DOM
+	jQuery('#messages').append(li);
+});
+
+//goal is to send an acknowledgement from the server back to 
+//the client that we got the data
+//no longer needed since form is created
+/*socket.emit('createMessage', {
+	from: 'John',
+	text: 'Hi'
+}, function(data) {
+	console.log('Got it', data);
+})*/
+
+jQuery('#message-form').on('submit', function(e) {
+	//prevenents the default for the event = refresh process
+	e.preventDefault();
+
+	socket.emit('createMessage', {
+		from: 'User',
+		//selects name attr with message
+		text: jQuery('[name=message]').val()
+	}, function() {
+
+	});
 });
