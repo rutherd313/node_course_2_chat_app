@@ -4,6 +4,7 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
+const {generateMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 // console.log(__dirname + '/../public'); //old way
 // console.log(publicPath); //new way 
@@ -47,29 +48,16 @@ io.on('connection', (socket) => { //individual socket
 	});*/
 
 	//challenge
-	socket.emit('newMessage', {
-		//anytime msg sent from server, text is from admin
-		from: 'Admin',
-		text: 'Welcome to the chat app',
-		createdAt: new Date().getTime()
-	})
+	socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-	socket.broadcast.emit('newMessage', {
-		from: 'Admin',
-		text: 'New user joined',
-		createdAt: new Date().getTime()
-	})
+	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
 	//createMessage Event
 	socket.on('createMessage', (message) => {
 		console.log('createMessage', message);
 		//emits to every single connection
-		io.emit('newMessage', {
-			from: message.from,
-			text: message.text,
-			//prevents clients from spoofing, so created on server side
-			createdAt: new Date().getTime()
-		})
+		io.emit('newMessage', generateMessage(message.from, message.text));
+
 		//broadcasting -> emiting event to err body except for one user
 		//this case, errbody will see message sent except me
 		/*socket.broadcast.emit('newMessage', {
