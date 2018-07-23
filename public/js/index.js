@@ -1,6 +1,27 @@
 //calling io() initiates the request from client to server to open web socket
 var socket = io();
 
+//autoscrolling
+//to be called 2x = newMessage & newLocationMessage
+function scrollToBottom(){
+	//Selectors
+	var messages = jQuery('#messages');
+	//last message added b4 the call to scrollToBottom
+	var newMessage = messages.children('li:last-child')
+	//heights
+	//prop gives cross-browser way to fetch property, jQuery alt
+	//to work on all browsers
+	var clientHeight = messages.prop('clientHeight');
+	var scrollTop = messages.prop('scrollTop');
+	var scrollHeight = messages.prop('scrollHeight');
+	var newMessageHeight = newMessage.innerHeight();
+	var lastMessageHeight = newMessage.prev().innerHeight();
+
+	if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+		messages.scrollTop(scrollHeight);
+	}
+}
+
 socket.on('connect', function () {
 	console.log('Connected to server');
 
@@ -37,6 +58,7 @@ socket.on('newMessage', function(message) {
 	});
 
 	jQuery('#messages').append(html);
+	scrollToBottom();
 	
 	// console.log('New message', message);
 	// var li = jQuery('<li></li>');
@@ -56,6 +78,7 @@ socket.on('newLocationMessage', function (message) {
 	});
 
 	jQuery('#messages').append(html);
+	scrollToBottom();
 
 	// var li = jQuery('<li></li>');
 	// var a = jQuery('<a target="_blank">My current location</a>');
