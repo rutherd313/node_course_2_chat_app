@@ -36,6 +36,17 @@ socket.on('newMessage', function(message) {
 	jQuery('#messages').append(li);
 });
 
+socket.on('newLocationMessage', function (message) {
+	var li = jQuery('<li></li>');
+	var a = jQuery('<a target="_blank">My current location</a>');
+
+	li.text(`${message.from}: `);
+	//fetches the value of the arg inside
+	a.attr('href', message.url);
+	li.append(a);
+	jQuery('#messages').append(li);
+});
+
 //goal is to send an acknowledgement from the server back to 
 //the client that we got the data
 //no longer needed since form is created
@@ -58,3 +69,21 @@ jQuery('#message-form').on('submit', function(e) {
 
 	});
 });
+
+var locationButton = jQuery('#send-location');
+locationButton.on('click', function () {
+	//geolocation api exists on:
+	if (!navigator.geolocation) {
+		return alert('Geolocation not supported by your browser');
+	}
+	//gets the coordinates
+	navigator.geolocation.getCurrentPosition(function (position) {
+		socket.emit('createLocationMessage', {
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude
+		});
+	}, function () { //error handler
+		alert('Unable to fetch location')
+	});
+})
+
