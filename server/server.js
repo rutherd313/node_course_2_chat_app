@@ -77,9 +77,12 @@ io.on('connection', (socket) => { //individual socket
 
 	//createMessage Event
 	socket.on('createMessage', (message, callback) => {
-		console.log('createMessage', message);
-		//emits to every single connection
-		io.emit('newMessage', generateMessage(message.from, message.text));
+		var user = users.getUser(socket.id);
+		if (user && isRealString(message.text)) {
+			//emits to every single connection
+			//io.emit('newMessage', generateMessage(message.from, message.text));
+		}	io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+		
 		callback();
 		//broadcasting -> emiting event to err body except for one user
 		//this case, errbody will see message sent except me
@@ -91,7 +94,10 @@ io.on('connection', (socket) => { //individual socket
 	});
 
 	socket.on('createLocationMessage', (coords) => {
-		io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
+		var user = users.getUser(socket.id);
+		if (user) {
+			io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+		}
 	})
 
 	socket.on('disconnect', () => {
