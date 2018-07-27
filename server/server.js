@@ -70,8 +70,7 @@ io.on('connection', (socket) => { //individual socket
 		//socket.broadcast.emit => all but current user
 		//socket.emit => one user
 		socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
-		socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
-				
+		socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));		
 		callback();
 	})
 
@@ -110,7 +109,6 @@ io.on('connection', (socket) => { //individual socket
 			//sends message
 			io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
 		}
-		console.log('User was disconnected');
 	});
 });
 
